@@ -21,9 +21,9 @@ Script Bash per avviare rapidamente un server PXE locale basato su **iPXE**, con
 ## 📁 Struttura richiesta
 
 
--/srv/tftp # file PXE (ipxe.efi, undionly.kpxe, ecc.)
+- /srv/tftp # file PXE (ipxe.efi, undionly.kpxe, ecc.)
 
--/srv/http # kernel, initrd, filesystem squashfs
+- /srv/http # kernel, initrd, filesystem squashfs
 
 
 ---
@@ -48,7 +48,7 @@ Se utilizzi una build custom iPXE:
 
 ## ▶️ Utilizzo
 
-Rendi eseguibile lo script:
+- Rendi eseguibile lo script:
 
 
 chmod +x pxe-direct-server-netboot.sh
@@ -57,7 +57,7 @@ chmod +x pxe-direct-systemrescue-locale.sh
 
 
 
-Avvia il server:
+- Avvia il server:
 
 
 sudo ./pxe-direct-server-netboot.sh

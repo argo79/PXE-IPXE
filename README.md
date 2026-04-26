@@ -49,14 +49,17 @@ IPXE_BUILD_DIR=~/blobspace/pxe-direct-server/ipxe/src/bin-x86_64-efi
 Rendi eseguibile lo script:
 
 
-chmod +x pxe-server.sh
+chmod +x pxe-direct-server-netboot.sh
+
+chmod +x pxe-direct-systemrescue-locale.sh
 
 
 Avvia il server:
 
 
-sudo ./pxe-server.sh
+sudo ./pxe-direct-server-netboot.sh
 
+sudo ./pxe-direct-systemrescue-locale.sh
 
 ---
 

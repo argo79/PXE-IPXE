@@ -1,0 +1,9 @@
+#!ipxe
+
+set base https://boot.netboot.xyz
+
+console --x 1024 --y 768
+console
+
+echo Booting netboot.xyz stable...
+chain ${base}/menu.ipxe

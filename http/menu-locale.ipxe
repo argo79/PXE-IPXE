@@ -1,0 +1,64 @@
+#!ipxe
+
+set server_ip 192.168.11.1
+
+console
+console --x 1024 --y 768
+
+:menu
+menu PXE SERVER LOCALE
+item sysresc        SystemRescue (RAM)
+item sysresc-safe   SystemRescue SAFE
+item kali           Kali GUI
+item kali-text      Kali Text
+item kali-forensic  Kali Forensic
+item shell          iPXE Shell
+item reboot         Reboot
+choose target && goto ${target}
+
+# =========================
+# SYSTEMRESCUE (FIXED)
+# =========================
+
+:sysresc
+kernel http://${server_ip}:8080/sysresc/linux     archisobasedir=sysresccd     archiso_http_srv=http://${server_ip}:8080/sysresc/     ip=dhcp     copytoram
+
+initrd http://${server_ip}:8080/sysresc/initrd.img
+boot || goto menu
+
+:sysresc-safe
+kernel http://${server_ip}:8080/sysresc/linux     archisobasedir=sysresccd     archiso_http_srv=http://${server_ip}:8080/sysresc/     ip=dhcp     nomodeset noapic noacpi
+
+initrd http://${server_ip}:8080/sysresc/initrd.img
+boot || goto menu
+
+# =========================
+# KALI LINUX (FIXED)
+# =========================
+
+:kali
+kernel http://${server_ip}:8080/kali/live/vmlinuz     boot=live     components     netboot=http     fetch=http://${server_ip}:8080/kali/live/filesystem.squashfs     ip=dhcp
+
+initrd http://${server_ip}:8080/kali/live/initrd.img
+boot || goto menu
+
+:kali-text
+kernel http://${server_ip}:8080/kali/live/vmlinuz     boot=live     components     netboot=http     fetch=http://${server_ip}:8080/kali/live/filesystem.squashfs     systemd.unit=multi-user.target     ip=dhcp
+
+initrd http://${server_ip}:8080/kali/live/initrd.img
+boot || goto menu
+
+:kali-forensic
+kernel http://${server_ip}:8080/kali/live/vmlinuz     boot=live     components     netboot=http     fetch=http://${server_ip}:8080/kali/live/filesystem.squashfs     forensic     ip=dhcp
+
+initrd http://${server_ip}:8080/kali/live/initrd.img
+boot || goto menu
+
+# =========================
+
+:shell
+shell
+goto menu
+
+:reboot
+reboot

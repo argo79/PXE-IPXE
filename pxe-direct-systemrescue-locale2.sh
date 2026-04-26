@@ -58,10 +58,7 @@ echo "📝 Creazione menu iPXE..."
 sudo tee "$HTTPROOT/menu-locale.ipxe" > /dev/null << EOF
 #!ipxe
 
-set server_ip $SERVER_IP
-
-console
-console --x 1024 --y 768
+set server_ip 192.168.11.1
 
 :menu
 menu PXE SERVER LOCALE
@@ -72,105 +69,77 @@ item kali-text      Kali Text
 item kali-forensic  Kali Forensic
 item shell          iPXE Shell
 item reboot         Reboot
-choose target && goto \${target}
+
+choose target || goto menu
+goto ${target}
 
 # =========================
-# SYSTEMRESCUE (FIXED)
+# SYSTEMRESCUE
 # =========================
 
 :sysresc
-kernel http://\${server_ip}:8080/sysresc/linux \
+kernel http://${server_ip}:8080/sysresc/linux \
     archisobasedir=sysresccd \
-    archiso_http_srv=http://\${server_ip}:8080/sysresc/ \
+    archiso_http_srv=http://${server_ip}:8080/sysresc/ \
     ip=dhcp \
     copytoram
-
-initrd http://\${server_ip}:8080/sysresc/initrd.img
+initrd http://${server_ip}:8080/sysresc/initrd.img
 boot || goto menu
 
 :sysresc-safe
-kernel http://\${server_ip}:8080/sysresc/linux \
+kernel http://${server_ip}:8080/sysresc/linux \
     archisobasedir=sysresccd \
-    archiso_http_srv=http://\${server_ip}:8080/sysresc/ \
+    archiso_http_srv=http://${server_ip}:8080/sysresc/ \
     ip=dhcp \
     nomodeset noapic noacpi
-
-initrd http://\${server_ip}:8080/sysresc/initrd.img
+initrd http://${server_ip}:8080/sysresc/initrd.img
 boot || goto menu
 
 # =========================
-# KALI LINUX (FIXED)
+# KALI
 # =========================
 
 :kali
-kernel http://\${server_ip}:8080/kali/live/vmlinuz \
+kernel http://${server_ip}:8080/kali/live/vmlinuz \
     boot=live \
     components \
     netboot=http \
-    fetch=http://\${server_ip}:8080/kali/live/filesystem.squashfs \
+    fetch=http://${server_ip}:8080/kali/live/filesystem.squashfs \
     ip=dhcp
-
-initrd http://\${server_ip}:8080/kali/live/initrd.img
+initrd http://${server_ip}:8080/kali/live/initrd.img
 boot || goto menu
 
 :kali-text
-kernel http://\${server_ip}:8080/kali/live/vmlinuz \
+kernel http://${server_ip}:8080/kali/live/vmlinuz \
     boot=live \
     components \
     netboot=http \
-    fetch=http://\${server_ip}:8080/kali/live/filesystem.squashfs \
+    fetch=http://${server_ip}:8080/kali/live/filesystem.squashfs \
     systemd.unit=multi-user.target \
     ip=dhcp
-
-initrd http://\${server_ip}:8080/kali/live/initrd.img
+initrd http://${server_ip}:8080/kali/live/initrd.img
 boot || goto menu
 
 :kali-forensic
-kernel http://\${server_ip}:8080/kali/live/vmlinuz \
+kernel http://${server_ip}:8080/kali/live/vmlinuz \
     boot=live \
     components \
     netboot=http \
-    fetch=http://\${server_ip}:8080/kali/live/filesystem.squashfs \
+    fetch=http://${server_ip}:8080/kali/live/filesystem.squashfs \
     forensic \
     ip=dhcp
-
-initrd http://\${server_ip}:8080/kali/live/initrd.img
+initrd http://${server_ip}:8080/kali/live/initrd.img
 boot || goto menu
 
+# =========================
+# SHELL
 # =========================
 
 :shell
 shell
-goto menu
 
 :reboot
 reboot
-EOF
-
-# =========================
-# 4. DNSMASQ
-# =========================
-
-echo "⚙️ Configurazione dnsmasq..."
-
-sudo tee /etc/dnsmasq.d/pxe.conf > /dev/null << EOF
-interface=$INTERFACE
-bind-interfaces
-
-dhcp-range=192.168.11.10,192.168.11.200,12h
-dhcp-option=3,$SERVER_IP
-
-dhcp-match=set:ipxe,175
-dhcp-boot=tag:ipxe,http://$SERVER_IP:8080/menu-locale.ipxe
-
-dhcp-match=set:efi-x64,option:client-arch,7
-dhcp-boot=tag:efi-x64,tag:!ipxe,snponly.efi
-
-dhcp-boot=tag:!efi-x64,tag:!ipxe,undionly.kpxe
-
-enable-tftp
-tftp-root=$TFTPROOT
-log-dhcp
 EOF
 
 # =========================

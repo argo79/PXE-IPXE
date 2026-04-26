@@ -12,7 +12,9 @@ Avvio di:
 SystemRescue (RAM / Safe)
 Kali Linux (GUI / Text / Forensic)
 Uso opzionale di build custom iPXE
+
 📁 Struttura richiesta
+
 /srv/tftp      # file PXE (ipxe.efi, undionly.kpxe, ecc.)
 /srv/http      # kernel, initrd, filesystem squashfs
 ⚙️ Configurazione
@@ -25,6 +27,7 @@ SERVER_IP="192.168.11.1"
 Se hai una build custom iPXE:
 
 IPXE_BUILD_DIR=~/blobspace/pxe-direct-server/ipxe/src/bin-x86_64-efi
+
 ▶️ Utilizzo
 
 Rendi eseguibile lo script:
@@ -34,16 +37,22 @@ chmod +x pxe-server.sh
 Avvia:
 
 sudo ./pxe-server.sh
+
 🌐 Accesso
+
 PXE boot client → menu iPXE automatico
 HTTP server:
 http://192.168.11.1:8080
+
 📦 Requisiti
+
 Linux (testato su Kali)
 dnsmasq
 python3
 permessi root
+
 ⚠️ Note
+
 Disabilita altri servizi DHCP nella rete per evitare conflitti
 Assicurati che la scheda di rete sia corretta (eth0, wlan0, ecc.)
 Il firewall deve permettere:

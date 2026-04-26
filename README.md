@@ -1,61 +1,86 @@
-📡 PXE Direct Server (iPXE + dnsmasq)
+# 📡 PXE Direct Server (iPXE + dnsmasq)
 
-Script Bash per avviare rapidamente un server PXE locale basato su iPXE, con supporto a boot via HTTP di immagini come SystemRescue e Kali Linux.
+Script Bash per avviare rapidamente un server PXE locale basato su **iPXE**, con supporto a boot via HTTP di immagini come **SystemRescue** e **Kali Linux**.
 
-🚀 Funzionalità
-Setup automatico di:
-DHCP + TFTP tramite dnsmasq
-HTTP server (python3 -m http.server)
-Supporto boot UEFI e BIOS
-Menu iPXE dinamico via HTTP
-Avvio di:
-SystemRescue (RAM / Safe)
-Kali Linux (GUI / Text / Forensic)
-Uso opzionale di build custom iPXE
+---
 
-📁 Struttura richiesta
+## 🚀 Funzionalità
 
-/srv/tftp      # file PXE (ipxe.efi, undionly.kpxe, ecc.)
-/srv/http      # kernel, initrd, filesystem squashfs
-⚙️ Configurazione
+- Setup automatico di:
+  - DHCP + TFTP tramite `dnsmasq`
+  - HTTP server (`python3 -m http.server`)
+- Supporto boot UEFI e BIOS
+- Menu iPXE dinamico via HTTP
+- Boot supportati:
+  - SystemRescue (RAM / Safe)
+  - Kali Linux (GUI / Text / Forensic)
+- Uso opzionale di build custom iPXE
+
+---
+
+## 📁 Struttura richiesta
+
+
+/srv/tftp # file PXE (ipxe.efi, undionly.kpxe, ecc.)
+/srv/http # kernel, initrd, filesystem squashfs
+
+
+---
+
+## ⚙️ Configurazione
 
 Modifica le variabili all’inizio dello script:
+
 
 INTERFACE="eth0"
 SERVER_IP="192.168.11.1"
 
-Se hai una build custom iPXE:
+
+Se utilizzi una build custom iPXE:
+
 
 IPXE_BUILD_DIR=~/blobspace/pxe-direct-server/ipxe/src/bin-x86_64-efi
 
-▶️ Utilizzo
+
+---
+
+## ▶️ Utilizzo
 
 Rendi eseguibile lo script:
 
+
 chmod +x pxe-server.sh
 
-Avvia:
+
+Avvia il server:
+
 
 sudo ./pxe-server.sh
 
-🌐 Accesso
 
-PXE boot client → menu iPXE automatico
-HTTP server:
-http://192.168.11.1:8080
+---
 
-📦 Requisiti
+## 🌐 Accesso
 
-Linux (testato su Kali)
-dnsmasq
-python3
-permessi root
+- PXE boot client → menu iPXE automatico
+- HTTP server disponibile su: http://192.168.11.1:8080
 
-⚠️ Note
+---
 
-Disabilita altri servizi DHCP nella rete per evitare conflitti
-Assicurati che la scheda di rete sia corretta (eth0, wlan0, ecc.)
-Il firewall deve permettere:
-UDP 67/68 (DHCP)
-UDP 69 (TFTP)
-TCP 8080 (HTTP)
+## 📦 Requisiti
+
+- Linux (testato su Kali)
+- dnsmasq
+- python3
+- Permessi root
+
+---
+
+## ⚠️ Note
+
+- Disabilita altri servizi DHCP nella rete per evitare conflitti
+- Verifica che la scheda di rete sia corretta (eth0, wlan0, ecc.)
+- Porte richieste:
+  - UDP 67/68 → DHCP
+  - UDP 69 → TFTP
+  - TCP 8080 → HTTP

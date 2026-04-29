@@ -82,6 +82,43 @@ sudo ./pxe-direct-systemrescue-locale.sh
 
 ---
 
+## 📌 Aggiungere nuove ISO al server PXE
+
+Per aggiungere una nuova immagine:
+
+1. Montare la ISO:
+   sudo mount -o loop file.iso /mnt/iso
+
+2. Identificare i file di boot (vmlinuz, initrd, filesystem.squashfs)
+
+3. Copiarli in /srv/http:
+   sudo mkdir -p /srv/http/<nome_distro>
+   sudo cp ... /srv/http/<nome_distro>/
+
+4. Aggiornare il menu iPXE con i nuovi path HTTP
+
+	- Nel file menu-locale.ipxe aggiungi:
+
+:kali
+kernel http://${server_ip}:8080/kali/vmlinuz \
+    boot=live \
+    components \
+    netboot=http \
+    fetch=http://${server_ip}:8080/kali/filesystem.squashfs \
+    ip=dhcp
+
+initrd http://${server_ip}:8080/kali/initrd.img
+boot || goto menu
+
+	- Nel menu iniziale aggiungi:
+
+item kali Kali Linux
+
+5. Smontare la ISO:
+   sudo umount /mnt/iso
+
+---
+
 ## ⚠️ Note
 
 - Disabilita altri servizi DHCP nella rete per evitare conflitti

@@ -1,6 +1,6 @@
 #!/bin/bash
 # ======================================================================
-# netbootxyz-stable.sh - PXE stabile con tastiera FIX
+# pxe-direct-server-netboot.sh - PXE
 # ======================================================================
 
 set -e
@@ -14,7 +14,7 @@ HTTPROOT="/srv/http"
 CACHEDIR="/var/cache/netbootxyz"
 
 echo "======================================"
-echo " NETBOOT.XYZ PXE STABLE FIX"
+echo " NETBOOT.XYZ PXE - ARG0 mod"
 echo "======================================"
 
 # =========================
@@ -39,11 +39,10 @@ cd "$TFTPROOT"
 wget -q -O netboot.xyz.kpxe https://boot.netboot.xyz/ipxe/netboot.xyz.kpxe
 wget -q -O netboot.xyz.efi  https://boot.netboot.xyz/ipxe/netboot.xyz.efi
 
-# 🔥 FIX IMPORTANTISSIMO TASTIERA
 wget -q -O snponly.efi https://boot.ipxe.org/snponly.efi
 
 # =========================
-# 4. AUTOEXEC FIX (CRITICO)
+# 4. AUTOEXEC
 # =========================
 
 sudo tee "$HTTPROOT/autoexec.ipxe" > /dev/null <<EOF
@@ -53,7 +52,7 @@ set server_ip $SERVER_IP
 
 console --x 1024 --y 768
 
-menu NETBOOT XYZ STABLE
+menu NETBOOT XYZ STABLE - ARG0 mod
 item netboot https://boot.netboot.xyz/menu.ipxe
 item shell   iPXE shell
 item reboot  reboot
@@ -71,7 +70,7 @@ reboot
 EOF
 
 # =========================
-# 5. DNSMASQ FIX
+# 5. DNSMASQ
 # =========================
 
 sudo tee /etc/dnsmasq.d/netbootxyz.conf > /dev/null <<EOF
@@ -85,8 +84,6 @@ dhcp-option=3,$SERVER_IP
 dhcp-match=set:ipxe,175
 dhcp-match=set:efi64,option:client-arch,7
 dhcp-match=set:bios,option:client-arch,0
-
-# 🔥 FIX BOOT ORDER
 
 dhcp-boot=tag:ipxe,http://$SERVER_IP:8080/autoexec.ipxe
 
